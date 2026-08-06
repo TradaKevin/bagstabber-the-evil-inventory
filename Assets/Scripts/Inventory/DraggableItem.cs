@@ -15,6 +15,7 @@ public class DraggableItem : MonoBehaviour,
 
     [Header("UI")]
     [SerializeField] private TMP_Text itemNameText;
+    private Sprite defaultIconSprite;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
@@ -42,6 +43,8 @@ public class DraggableItem : MonoBehaviour,
         canvasGroup = GetComponent<CanvasGroup>();
 
         Canvas parentCanvas = GetComponentInParent<Canvas>();
+
+        defaultIconSprite = GetComponent<Image>().sprite;
 
         if (parentCanvas != null)
         {
@@ -79,10 +82,7 @@ public class DraggableItem : MonoBehaviour,
 
         Image iconImage = GetComponent<Image>();
 
-        if (itemData.Icon != null)
-        {
-            iconImage.sprite = itemData.Icon;
-        }
+        iconImage.sprite = itemData.Icon != null ? itemData.Icon : defaultIconSprite;
 
         iconImage.color = itemData.IconTint;
 
@@ -192,5 +192,16 @@ public class DraggableItem : MonoBehaviour,
 
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
+    }
+
+    public void SetItemData(ItemData newItemData)
+    {
+        if (IsPlacedInHand)
+        {
+            ReturnToOriginalSlot();
+        }
+
+        itemData = newItemData;
+        RefreshVisuals();
     }
 }
